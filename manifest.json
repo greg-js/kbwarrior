@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "kbwarrior",
+  "description": "Simple hinting and a few vim-style browsing shortcuts. Nothing more.",
+  "version": "0.1",
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "kbwarrior settings"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ]
+}

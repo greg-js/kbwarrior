@@ -1,0 +1,12 @@
+{
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "chrome": true
+  },
+  "rules": {
+    "no-console": 0
+  }
+}
