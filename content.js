@@ -1,8 +1,30 @@
 var state = {
-  isHinting: false
+  isHinting: false,
+  allLinks: Array.prototype.slice.call(document.querySelectorAll('a'))
 };
 
-document.addEventListener('keydown', function(e) {
+if (document.activeElement.tagName !== 'INPUT') {
+  addKeyboardListeners();
+}
+
+document.querySelectorAll('input').forEach(function(el) {
+  el.addEventListener('focus', function() {
+    removeKeyboardListeners();
+  });
+  el.addEventListener('blur', function() {
+    addKeyboardListeners();
+  });
+});
+
+function addKeyboardListeners() {
+  document.addEventListener('keydown', handleKeys, true);
+}
+
+function removeKeyboardListeners() {
+  document.removeEventListener('keydown', handleKeys, true);
+}
+
+function handleKeys(e) {
   switch (e.which) {
     case 75: // 'k'
       window.scrollBy(0, -30);
@@ -23,12 +45,12 @@ document.addEventListener('keydown', function(e) {
       window.scrollBy(0, -window.innerHeight/2);
       break;
     case 70: // 'f'
-      var allLinks = Array.prototype.slice.call(document.querySelectorAll('a'));
-      var linksInView = allLinks.filter(isOnScreen);
+      var linksInView = state.allLinks.filter(isOnScreen);
+
       if (!state.isHinting) {
         linksInView.forEach(addBorder);
       } else {
-        allLinks.forEach(removeBorder);
+        state.allLinks.forEach(removeBorder);
       }
 
       state.isHinting = !state.isHinting;
@@ -36,7 +58,7 @@ document.addEventListener('keydown', function(e) {
     default:
       break;
   }
-}, true);
+}
 
 function isOnScreen(el) {
   var elRect = el.getBoundingClientRect();
