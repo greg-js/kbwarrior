@@ -1,5 +1,17 @@
-.kbwarrior-bordered {
-  border: 2px solid blue;
-  border-radius: 5px;
-  padding: 1px;
+.kbw-hint {
+  border-radius: 3px;
+  border: solid 1px red;
+  position: absolute;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: 1px;
+  -webkit-box-shadow: none;
+  width: auto;
+  line-height: 14px;
+  font-size: 14px;
+  padding: 2px;
+  margin: 0;
+  background: yellow;
+  color: red;
+  z-index: 99999;
 }

@@ -11,6 +11,12 @@
     "activeTab",
     "tabs"
   ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
   "content_scripts": [
     {
       "matches": [
