@@ -1,4 +1,3 @@
-// TODO: ignore shift/alt/ctrl modifier keys
 var state = {
   isHinting: false,
   allLinks: Array.prototype.slice.call(document.querySelectorAll('a')),
@@ -36,6 +35,10 @@ document.querySelectorAll('input').forEach(function(el) {
  * @param {object} e - the event
  */
 function handleNavKeys(e) {
+  if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+    return void 0;
+  }
+
   switch (e.which) {
     case 75: // 'k'
       window.scrollBy(0, -40);
@@ -78,7 +81,7 @@ function handleNavKeys(e) {
  * @param {object} e - the event
  */
 function handleHintKey(e) {
-  if (e.which === 70) { // 'f'
+  if (e.which === 70 && !(e.ctrlKey || e.altKey || e.shiftKey || e.metaKey)) { // 'f'
     // add the on-screen links to the state
     state.linksInView = state.allLinks.filter(isOnScreen);
 
