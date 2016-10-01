@@ -13,6 +13,7 @@ I aim to keep this simple, and am still not sure about the final feature set. Fo
 * `u` to scroll up half a page
 * `d` to scroll down half a page
 * `backspace` to go back in history (thanks a lot to Google by the way for generously removing that for us!)
+* NO SMOOTH SCROLLING IT'S THE DEVIL
 
 ## Keyboard tab navigation
 
