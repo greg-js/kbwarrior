@@ -1,3 +1,4 @@
+// TODO: ignore shift/alt/ctrl modifier keys
 var state = {
   isHinting: false,
   allLinks: Array.prototype.slice.call(document.querySelectorAll('a')),
@@ -14,45 +15,21 @@ var keys = [
 
 // some websites immediately focus on inputs, don't add listeners yet
 if (document.activeElement.tagName !== 'INPUT') {
-  addListener(document, 'keydown', handleNavKeys, true);
-  addListener(document, 'keydown', handleHintKey, true);
+  document.addEventListener('keydown', handleNavKeys, true);
+  document.addEventListener('keydown', handleHintKey, true);
 }
 
 // dynamically remove and add listeners on focus and blur of input fields
 document.querySelectorAll('input').forEach(function(el) {
-  if (!el.classList.contains('kbw-input')) {
-    el.addEventListener('focus', function() {
-      removeListener(document, 'keydown', handleNavKeys, true);
-      removeListener(document, 'keydown', handleHintKey, true);
-    });
-    el.addEventListener('blur', function() {
-      addListener(document, 'keydown', handleNavKeys, true);
-      addListener(document, 'keydown', handleHintKey, true);
-    });
-  }
+  el.addEventListener('focus', function() {
+    document.removeEventListener('keydown', handleNavKeys, true);
+    document.removeEventListener('keydown', handleHintKey, true);
+  });
+  el.addEventListener('blur', function() {
+    document.addEventListener('keydown', handleNavKeys, true);
+    document.addEventListener('keydown', handleHintKey, true);
+  });
 });
-
-/**
- * Helper for adding listeners
- * @param {HTMLElement} el - the element to add a listener to
- * @param {string} action - the event trigger
- * @param {function} handler - the event handler
- * @param {boolean} bool - bubbling useCapture
- */
-function addListener(el, action, handler, bool) {
-  el.addEventListener(action, handler, bool);
-}
-
-/**
- * Helper for removing listeners
- * @param {HTMLElement} el - the element to add a listener to
- * @param {string} action - the event trigger
- * @param {function} handler - the event handler
- * @param {boolean} bool - bubbling useCapture
- */
-function removeListener(el, action, handler, bool) {
-  el.removeEventListener(action, handler, bool);
-}
 
 /**
  * Navigational key handler
@@ -78,6 +55,21 @@ function handleNavKeys(e) {
     case 85: // 'u'
       window.scrollBy(0, -window.innerHeight/2);
       break;
+    case 8: // backspace
+      window.history.go(-1);
+      break;
+    case 78: // 'n'
+      sendMessage({
+        type: 'tabs',
+        payload: 1
+      });
+      break;
+    case 80: // 'p'
+      sendMessage({
+        type: 'tabs',
+        payload: -1
+      });
+      break;
   }
 }
 
@@ -93,14 +85,14 @@ function handleHintKey(e) {
     if (!state.isHinting) {
       // add hints, disable nav keys and enable keyboard capture
       state.linksInView.forEach(addHint);
-      removeListener(document, 'keydown', handleNavKeys, true);
-      addListener(document, 'keydown', captureHintKeys, true);
+      document.removeEventListener('keydown', handleNavKeys, true);
+      document.addEventListener('keydown', captureHintKeys, true);
     } else {
       // disable keyboard capture, reset hints and enable nav keys
-      removeListener(document, 'keydown', captureHintKeys, true);
+      document.removeEventListener('keydown', captureHintKeys, true);
       state.allLinks.forEach(removeHint);
       state.currentHint = 0;
-      addListener(document, 'keydown', handleNavKeys, true);
+      document.addEventListener('keydown', handleNavKeys, true);
     }
 
     state.isHinting = !state.isHinting;
@@ -128,9 +120,9 @@ function captureHintKeys(e) {
   // look for hits in the existing hints links
   // if hit, send a runtime message to background.js
   if (state.hints[last]) {
-    chrome.runtime.sendMessage({
-      from: 'content.js',
-      message: state.hints[last]
+    sendMessage({
+      type: 'goto',
+      payload: state.hints[last]
     });
   }
 }
@@ -187,4 +179,15 @@ function getHint(current, max) {
   } else {
     return keys[Math.floor(current / 25)] + keys[(current % 25)];
   }
+}
+
+/**
+ * Send a message to background.js which has access to chrome.tabs
+ * @param {object} msg - the message - has a type and a payload
+ */
+function sendMessage(msg) {
+  chrome.runtime.sendMessage({
+    from: 'content.js',
+    message: msg
+  });
 }
