@@ -23,7 +23,13 @@
         "http://*/*",
         "https://*/*"
       ],
-      "js": ["content.js"],
+      "exclude_matches": [
+        "*://*.facebook.com/*",
+        "*://*.twitter.com/*",
+        "*://*.reddit.com/*",
+        "*://*.github.com/*"
+      ],
+      "js": ["helpers.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_end"
     }

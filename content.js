@@ -1,41 +1,31 @@
+/* global h */
 var state = {
   isHinting: false,
-  allLinks: Array.prototype.slice.call(document.querySelectorAll('a')),
+  allLinks: h.getAll('a'),
+  allInputs: h.getAll('input,textarea'),
+  linksInView: [],
+  inputsInView: [],
   currentHint: 0,
   hints: {},
-  currentInput: []
+  currentKeys: [],
+  keys: [
+    's', 'd', 'u', 'h', 'j', 'k', 'l', 'g', 'a', 'v', 'n', 't',
+    'y', 'r', 'b', 'm', 'o', 'w', 'e', 'c', 'x', 'z', 'p', 'q'
+  ]
 };
 
-// loosely ordered, with the 'f' key removed
-var keys = [
-  's', 'd', 'u', 'h', 'j', 'k', 'l', 'g', 'a', 'v', 'n', 't', 'y',
-  'r', 'b', 'm', 'i', 'o', 'w', 'e', 'c', 'x', 'z', 'p', 'q'
-];
-
-// some websites immediately focus on inputs, don't add listeners yet
-if (document.activeElement.tagName !== 'INPUT') {
-  document.addEventListener('keydown', handleNavKeys, true);
-  document.addEventListener('keydown', handleHintKey, true);
-}
-
-// dynamically remove and add listeners on focus and blur of input fields
-document.querySelectorAll('input').forEach(function(el) {
-  el.addEventListener('focus', function() {
-    document.removeEventListener('keydown', handleNavKeys, true);
-    document.removeEventListener('keydown', handleHintKey, true);
-  });
-  el.addEventListener('blur', function() {
-    document.addEventListener('keydown', handleNavKeys, true);
-    document.addEventListener('keydown', handleHintKey, true);
-  });
-});
+// Attach the event handlers for nav, hint and insert features
+document.addEventListener('keyup', handleNavKeys, true);
+document.addEventListener('keyup', handleHintKey, true);
+document.addEventListener('keyup', handleInsertKey, true);
 
 /**
  * Navigational key handler
  * @param {object} e - the event
  */
 function handleNavKeys(e) {
-  if (e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+  // disable the navigational keys if in an input field
+  if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
     return void 0;
   }
 
@@ -62,13 +52,13 @@ function handleNavKeys(e) {
       window.history.go(-1);
       break;
     case 78: // 'n'
-      sendMessage({
+      h.sendMessage({
         type: 'tabs',
         payload: 1
       });
       break;
     case 80: // 'p'
-      sendMessage({
+      h.sendMessage({
         type: 'tabs',
         payload: -1
       });
@@ -81,24 +71,48 @@ function handleNavKeys(e) {
  * @param {object} e - the event
  */
 function handleHintKey(e) {
-  if (e.which === 70 && !(e.ctrlKey || e.altKey || e.shiftKey || e.metaKey)) { // 'f'
+  // disable in input fields
+  if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+    return void 0;
+  }
+
+  if (e.which === 70) { // 'f'
     // add the on-screen links to the state
-    state.linksInView = state.allLinks.filter(isOnScreen);
+    state.linksInView = state.allLinks.filter(h.isOnScreen);
 
     if (!state.isHinting) {
       // add hints, disable nav keys and enable keyboard capture
-      state.linksInView.forEach(addHint);
-      document.removeEventListener('keydown', handleNavKeys, true);
-      document.addEventListener('keydown', captureHintKeys, true);
+      state.linksInView.forEach(h.addHint);
+      document.removeEventListener('keyup', handleNavKeys, true);
+      document.addEventListener('keyup', captureKeyboard, true);
+      state.isHinting = true;
     } else {
-      // disable keyboard capture, reset hints and enable nav keys
-      document.removeEventListener('keydown', captureHintKeys, true);
-      state.allLinks.forEach(removeHint);
-      state.currentHint = 0;
-      document.addEventListener('keydown', handleNavKeys, true);
+      resetCapture();
     }
+  }
+}
 
-    state.isHinting = !state.isHinting;
+/**
+ * Insert key handler
+ * @param {object} e - the event
+ */
+function handleInsertKey(e) {
+  // disable in input fields
+  if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+    return void 0;
+  }
+
+  if (e.which === 73) { // 'i'
+    state.inputsInView = state.allInputs.filter(h.isOnScreen);
+    if (!state.isHinting) {
+      // add hints, disable nav keys and enable keyboard capture
+      state.inputsInView.forEach(h.addHint);
+      document.removeEventListener('keyup', handleNavKeys, true);
+      document.addEventListener('keyup', captureKeyboard, true);
+      state.isHinting = true;
+    } else {
+      resetCapture();
+    }
   }
 }
 
@@ -106,91 +120,40 @@ function handleHintKey(e) {
  * Keyboard capture for hint processing
  * @param {object} e - the event
  */
-function captureHintKeys(e) {
+function captureKeyboard(e) {
   var last;
 
-  // push the last key onto the state
-  state.currentInput.push(String.fromCharCode(e.which).toLowerCase());
+  if (!/^input|^textarea/i.test(e.target.tagName)) {
+    // push the last key onto the state
+    state.currentKeys.push(String.fromCharCode(e.which).toLowerCase());
 
-  // single char hints
-  if (state.linksInView.length < 19) {
-    last = state.currentInput[state.currentInput.length - 1];
-  // double char hints
-  } else {
-    last = state.currentInput.slice(-2).join('');
-  }
+    // single char hints
+    if (state.linksInView.length < 19) {
+      last = state.currentKeys[state.currentKeys.length - 1];
+    // double char hints
+    } else {
+      last = state.currentKeys.slice(-2).join('');
+    }
 
-  // look for hits in the existing hints links
-  // if hit, send a runtime message to background.js
-  if (state.hints[last]) {
-    sendMessage({
-      type: 'goto',
-      payload: state.hints[last]
-    });
-  }
-}
-
-/**
- * Determine whether a given element is in the viewport or not
- * @param {HTMLElement} el - the element
- */
-function isOnScreen(el) {
-  var elRect = el.getBoundingClientRect();
-  var viewWidth = document.documentElement.clientWidth;
-  var viewHeight = document.documentElement.clientHeight;
-
-  return (
-    (elRect.top    >= 0) &&
-    (elRect.right  <= viewWidth) &&
-    (elRect.bottom <= viewHeight) &&
-    (elRect.left   >= 0)
-  );
-}
-
-/**
- * Add a hint to a given element
- * @param {HTMLElement} el - the element
- */
-function addHint(el) {
-  var hintHead = getHint(state.currentHint++, state.linksInView.length);
-
-  // wrap the element in a span
-  el.innerHTML = '<span class="kbw-hint">' + hintHead + '</span>' + el.innerHTML;
-
-  // add this hint to the state
-  state.hints[hintHead] = el.href;
-}
-
-/**
- * Remove the hint for a given element
- * @param {HTMLElement} el - the element
- */
-function removeHint(el) {
-  el.innerHTML = el.innerHTML.replace(/^.+kbw-hint">\w+?<\/span>/, '');
-}
-
-/**
- * Calculate the name of the current hint
- * @param {number} current - the current hint position
- * @param {number} max - the total amount of hints to be created
- */
-function getHint(current, max) {
-  // one letter suffices
-  if (max < 26) {
-    return keys[current];
-  // must use two letters
-  } else {
-    return keys[Math.floor(current / 25)] + keys[(current % 25)];
+    // look for hits in the existing hints links
+    if (state.hints[last]) {
+      state.hints[last].el.click();
+      state.hints[last].el.focus();
+      resetCapture();
+    }
   }
 }
 
 /**
- * Send a message to background.js which has access to chrome.tabs
- * @param {object} msg - the message - has a type and a payload
+ * Reset input capture
  */
-function sendMessage(msg) {
-  chrome.runtime.sendMessage({
-    from: 'content.js',
-    message: msg
-  });
+function resetCapture() {
+  // disable keyboard capture, reset hints and re-enable nav keys
+  document.removeEventListener('keyup', captureKeyboard, true);
+  h.removeHintHTML();
+  state.currentHint = 0;
+  state.hints = {};
+  state.currentKeys = [];
+  state.isHinting = false;
+  document.addEventListener('keyup', handleNavKeys, true);
 }
