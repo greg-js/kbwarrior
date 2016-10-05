@@ -16,7 +16,7 @@ var state = {
 };
 
 // Attach the event handlers for nav, hint and insert features
-document.addEventListener('keyup', handleNavKeys, true);
+document.addEventListener('keydown', handleNavKeys, true);
 document.addEventListener('keyup', handleLinkKey, true);
 document.addEventListener('keyup', handleInsertKey, true);
 
@@ -85,7 +85,7 @@ function handleLinkKey(e) {
       // add hints, disable nav keys and enable keyboard capture
       state.isLinkHinting = true;
       state.linksInView.forEach(h.addHint);
-      document.removeEventListener('keyup', handleNavKeys, true);
+      document.removeEventListener('keydown', handleNavKeys, true);
       document.addEventListener('keyup', captureKeyboard, true);
     } else {
       resetCapture();
@@ -109,7 +109,7 @@ function handleInsertKey(e) {
       // add hints, disable nav keys and enable keyboard capture
       state.isInsertHinting = true;
       state.inputsInView.forEach(h.addHint);
-      document.removeEventListener('keyup', handleNavKeys, true);
+      document.removeEventListener('keydown', handleNavKeys, true);
       document.addEventListener('keyup', captureKeyboard, true);
     } else {
       resetCapture();
@@ -157,5 +157,5 @@ function resetCapture() {
   state.currentKeys = [];
   state.isLinkHinting = false;
   state.isInsertHinting = false;
-  document.addEventListener('keyup', handleNavKeys, true);
+  document.addEventListener('keydown', handleNavKeys, true);
 }
