@@ -49,8 +49,14 @@ var h = (function() { // eslint-disable-line
     var hintHead = getHint(state.currentHint++, state.linksInView.length);
     var span = createHintSpan(hintHead);
 
-    // wrap the element in a span
-    el.parentNode.insertBefore(span, el);
+    if (state.isInsertHinting) {
+      // insert the span as a sibling of the element
+      el.parentNode.insertBefore(span, el);
+    } else if (state.isLinkHinting) {
+      // insert the span as a child
+      console.log(el);
+      el.appendChild(span);
+    }
 
     // add this hint to the state
     state.hints[hintHead] = {

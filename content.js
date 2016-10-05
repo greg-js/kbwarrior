@@ -1,6 +1,7 @@
 /* global h */
 var state = {
-  isHinting: false,
+  isLinkHinting: false,
+  isInsertHinting: false,
   allLinks: h.getAll('a'),
   allInputs: h.getAll('input,textarea'),
   linksInView: [],
@@ -16,7 +17,7 @@ var state = {
 
 // Attach the event handlers for nav, hint and insert features
 document.addEventListener('keyup', handleNavKeys, true);
-document.addEventListener('keyup', handleHintKey, true);
+document.addEventListener('keyup', handleLinkKey, true);
 document.addEventListener('keyup', handleInsertKey, true);
 
 /**
@@ -67,10 +68,10 @@ function handleNavKeys(e) {
 }
 
 /**
- * Hint key handler
+ * Link hint key handler
  * @param {object} e - the event
  */
-function handleHintKey(e) {
+function handleLinkKey(e) {
   // disable in input fields
   if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
     return void 0;
@@ -80,12 +81,12 @@ function handleHintKey(e) {
     // add the on-screen links to the state
     state.linksInView = state.allLinks.filter(h.isOnScreen);
 
-    if (!state.isHinting) {
+    if (!state.isLinkHinting) {
       // add hints, disable nav keys and enable keyboard capture
+      state.isLinkHinting = true;
       state.linksInView.forEach(h.addHint);
       document.removeEventListener('keyup', handleNavKeys, true);
       document.addEventListener('keyup', captureKeyboard, true);
-      state.isHinting = true;
     } else {
       resetCapture();
     }
@@ -104,12 +105,12 @@ function handleInsertKey(e) {
 
   if (e.which === 73) { // 'i'
     state.inputsInView = state.allInputs.filter(h.isOnScreen);
-    if (!state.isHinting) {
+    if (!state.isInsertHinting) {
       // add hints, disable nav keys and enable keyboard capture
+      state.isInsertHinting = true;
       state.inputsInView.forEach(h.addHint);
       document.removeEventListener('keyup', handleNavKeys, true);
       document.addEventListener('keyup', captureKeyboard, true);
-      state.isHinting = true;
     } else {
       resetCapture();
     }
@@ -154,6 +155,7 @@ function resetCapture() {
   state.currentHint = 0;
   state.hints = {};
   state.currentKeys = [];
-  state.isHinting = false;
+  state.isLinkHinting = false;
+  state.isInsertHinting = false;
   document.addEventListener('keyup', handleNavKeys, true);
 }
