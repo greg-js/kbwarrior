@@ -7,6 +7,11 @@
     "default_popup": "popup.html",
     "default_title": "kbwarrior"
   },
+  "icons": {
+    "16": "kbw16.png",
+    "48": "kbw48.png",
+    "128": "kbw128.png"
+  },
   "permissions": [
     "activeTab",
     "tabs"
