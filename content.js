@@ -26,7 +26,7 @@ document.addEventListener('keyup', handleInsertKey, true);
  */
 function handleNavKeys(e) {
   // disable the navigational keys if in an input field
-  if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+  if (h.isEditable(e.target) || e.ctrlKey || e.metaKey || e.altKey) {
     return void 0;
   }
 
@@ -50,7 +50,11 @@ function handleNavKeys(e) {
       window.scrollBy(0, -window.innerHeight/2);
       break;
     case 8: // backspace
-      window.history.go(-1);
+      if (e.shiftKey) {
+        window.history.go(1);
+      } else {
+        window.history.go(-1);
+      }
       break;
     case 78: // 'n'
       h.sendMessage({
@@ -64,6 +68,10 @@ function handleNavKeys(e) {
         payload: -1
       });
       break;
+    case 81: // 'q'
+      h.sendMessage({
+        type: 'close'
+      });
   }
 }
 
@@ -73,7 +81,7 @@ function handleNavKeys(e) {
  */
 function handleLinkKey(e) {
   // disable in input fields
-  if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
+  if (h.isEditable(e.target) || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
     return void 0;
   }
 
@@ -138,9 +146,18 @@ function captureKeyboard(e) {
 
     // look for hits in the existing hints links
     if (state.hints[last]) {
-      state.hints[last].el.click();
-      state.hints[last].el.focus();
-      resetCapture();
+      if (e.shiftKey && state.isLinkHinting) {
+        // send to background as an action to open in new tab
+        h.sendMessage({
+          type: 'link',
+          payload: state.hints[last].el.href
+        });
+        // just simulate a click & focus
+      } else {
+        state.hints[last].el.click();
+        state.hints[last].el.focus();
+        resetCapture();
+      }
     }
   }
 }

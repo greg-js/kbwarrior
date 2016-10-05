@@ -1,5 +1,5 @@
 /**
- * Receive URI messages from content.js and navigate current tab
+ * Receive URI messages from content.js and route to right function
  */
 chrome.runtime.onMessage.addListener(function(req) {
   var msg;
@@ -8,16 +8,13 @@ chrome.runtime.onMessage.addListener(function(req) {
   if (req.from === 'content.js') {
     msg = req.message;
 
-    // redirect goto hints
-    if (msg.type === 'goto') {
-      chrome.tabs.query({
-        currentWindow: true,
-        active: true
-      }, function(tab) {
-        chrome.tabs.update(tab.id, {
-          url: msg.payload
-        });
-      });
+    // close current tab
+    if (msg.type === 'close') {
+      closeTab();
+
+    // open link in new window
+    } else if (msg.type === 'link') {
+      openNewTab(msg.payload);
 
     // switch tabs
     } else if (msg.type === 'tabs') {
@@ -25,6 +22,29 @@ chrome.runtime.onMessage.addListener(function(req) {
     }
   }
 });
+
+/**
+ * Open a given url in a new window
+ * @param {string} url - the url
+ */
+function openNewTab(url) {
+  chrome.tabs.create({
+    url: url
+  });
+}
+
+/**
+ * Close the current tab
+ */
+function closeTab() {
+  // get active tab
+  chrome.tabs.query({
+    currentWindow: true,
+    active: true
+  }, function(activeTab) {
+    chrome.tabs.remove(activeTab[0].id);
+  });
+}
 
 /**
  * Switch to the next or previous tab in the current window
