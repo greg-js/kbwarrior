@@ -1,3 +1,111 @@
-<body>
-  <h1>kbwarrior</h1>
-</body>
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="popup.js"></script>
+    <style>
+      html {
+        height: 130px;
+        overflow: hidden;
+        transition: all 1s;
+      }
+      body {
+        transition: all 1s;
+        text-align: center;
+        height: 130px;
+        overflow: hidden;
+      }
+      #content {
+        height: 130px;
+      }
+      button {
+        width: 100%;
+        margin-bottom: 0.5em;
+      }
+      #table-div {
+        border: 1px solid black;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        height: 420px;
+        padding: 5px;
+      }
+      tr:nth-child(odd) {
+        background: lightgray;
+      }
+      th {
+        background: black;
+        color: white;
+      }
+      td {
+        padding: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <h2>kbwarrior</h2>
+
+      <button class="kbw-instructions">Instructions</button>
+      <button class="kbw-project-home">Project</button>
+      <button class="kbw-gregjs">gregjs</button>
+    </div>
+
+    <div id="table-div">
+      <table>
+        <thead>
+          <tr>
+            <th>key</th>
+            <th>action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>j</td>
+            <td>scroll down</td>
+          </tr>
+          <tr>
+            <td>k</td>
+            <td>scroll up</td>
+          </tr>
+          <tr>
+            <td>h</td>
+            <td>scroll left</td>
+          </tr>
+          <tr>
+            <td>l</td>
+            <td>scroll right</td>
+          </tr>
+          <tr>
+            <td>d</td>
+            <td>scroll down half a page</td>
+          </tr>
+          <tr>
+            <td>u</td>
+            <td>scroll up half a page</td>
+          </tr>
+          <tr>
+            <td>n</td>
+            <td>next tab</td>
+          </tr>
+          <tr>
+            <td>p</td>
+            <td>previous tab</td>
+          </tr>
+          <tr>
+            <td>f</td>
+            <td>begin link hinting</td>
+          </tr>
+          <tr>
+            <td>i</td>
+            <td>begin insert hinting</td>
+          </tr>
+          <tr>
+            <td>backspace</td>
+            <td>go back in browser history</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

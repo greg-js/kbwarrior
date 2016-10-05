@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "kbwarrior settings"
+    "default_title": "kbwarrior"
   },
   "permissions": [
     "activeTab",
