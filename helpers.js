@@ -8,7 +8,8 @@ var h = (function() { // eslint-disable-line
   function isEditable(el) {
     return (
       /^input|^textarea/i.test(el.tagName) ||
-      el.classList.contains('editable')
+      el.classList.contains('editable') ||
+      el.contentEditable === 'true'
     );
   }
 
