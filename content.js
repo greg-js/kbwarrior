@@ -49,6 +49,13 @@ function handleNavKeys(e) {
     case 85: // 'u'
       window.scrollBy(0, -window.innerHeight/2);
       break;
+    case 71: // 'g'
+      if (e.shiftKey) {
+        window.scrollTo(0, document.body.scrollHeight);
+      } else {
+        window.scrollTo(0, 0);
+      }
+      break;
     case 8: // backspace
       if (e.shiftKey) {
         window.history.go(1);
