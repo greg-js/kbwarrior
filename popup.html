@@ -4,31 +4,36 @@
     <script type="text/javascript" src="popup.js"></script>
     <style>
       html {
-        height: 130px;
         overflow: hidden;
         transition: all 1s;
+        margin: 0;
+        width: 190px;
       }
       body {
         transition: all 1s;
         text-align: center;
-        height: 130px;
         overflow: hidden;
+        margin: 0;
+        width: 190px;
       }
       #content {
+        text-align: center;
         height: 130px;
       }
       button {
-        width: 100%;
+        width: 90%;
         margin-bottom: 0.5em;
       }
       #table-div {
         border: 1px solid black;
+        margin: 0 auto;
       }
       table {
         border-collapse: collapse;
         width: 100%;
         height: 420px;
         padding: 5px;
+        margin: 0;
       }
       tr:nth-child(odd) {
         background: lightgray;
@@ -36,6 +41,9 @@
       th {
         background: black;
         color: white;
+      }
+      td:first-child {
+        font-weight: bold;
       }
       td {
         padding: 0 5px;
@@ -85,6 +93,14 @@
             <td>scroll up half a page</td>
           </tr>
           <tr>
+            <td>g</td>
+            <td>scroll all the way up</td>
+          </tr>
+          <tr>
+            <td>G</td>
+            <td>scroll all the way down</td>
+          </tr>
+          <tr>
             <td>n</td>
             <td>next tab</td>
           </tr>
@@ -102,7 +118,11 @@
           </tr>
           <tr>
             <td>backspace</td>
-            <td>go back in browser history</td>
+            <td>go back</td>
+          </tr>
+          <tr>
+            <td>Shift+backspace</td>
+            <td>go forward</td>
           </tr>
         </tbody>
       </table>
