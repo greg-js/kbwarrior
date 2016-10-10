@@ -1,19 +1,19 @@
 .kbw-hint {
-  border-radius: 3px;
-  border: solid 1px red;
-  position: absolute;
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 1px;
-  -webkit-box-shadow: none;
-  width: auto;
-  line-height: 18px;
-  font-size: 18px;
-  padding: 0px 3px;
-  margin: 0;
-  background: yellow;
-  color: red;
-  z-index: 99999;
+  border-radius: 3px !important;
+  border: solid 1px red !important;
+  position: absolute !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  letter-spacing: 1px !important;
+  -webkit-box-shadow: none !important;
+  width: auto !important;
+  line-height: 18px !important;
+  font-size: 18px !important;
+  padding: 0px 3px !important;
+  margin: 0 !important;
+  background: yellow !important;
+  color: red !important;
+  z-index: 99999 !important;
   opacity: 1 !important;
-  font-style: normal;
+  font-style: normal !important;
 }
