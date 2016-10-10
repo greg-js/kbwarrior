@@ -32,7 +32,8 @@
         "*://*.facebook.com/*",
         "*://*.twitter.com/*",
         "*://*.reddit.com/*",
-        "*://*.github.com/*"
+        "*://*.github.com/*",
+        "*://*.youtube.com/*"
       ],
       "js": ["helpers.js", "content.js"],
       "css": ["content.css"],
