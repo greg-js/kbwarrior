@@ -30,7 +30,7 @@ I aim to keep this simple, and am still not sure about the final feature set. Fo
 * all other `kbwarrior` shortcuts will be disabled for as long as hinting is on
 * type a hint to navigate instantly to the hinted link
 * hold shift to open the link in a new tab
-* press `f` again to cancel and remove the hints
+* press `f`, `ESC` or `CTRL+[` again to cancel and remove the hints
 
 ## Inserting
 
@@ -63,6 +63,7 @@ Those site-defined shortcuts will interfere with the ones provided by this exten
 * GitHub
 * Reddit
 * Twitter
+* YouTube
 
 I will probably update this list as I go along. Feel free to make a PR or open an issue if there are other sites this really doesn't work on.
 
