@@ -2,7 +2,7 @@
 var state = {
   isLinkHinting: false,
   isInsertHinting: false,
-  allLinks: h.getAll('a'),
+  allLinks: h.getAll('a,button'),
   allInputs: h.getAll('input,textarea'),
   linksInView: [],
   inputsInView: [],
@@ -87,6 +87,10 @@ function handleNavKeys(e) {
  * @param {object} e - the event
  */
 function handleLinkKey(e) {
+  if (state.isLinkHinting && (e.which === 27 || (e.ctrlKey && e.which === 219))) { // esc/ctrl-[
+    resetCapture();
+  }
+
   // disable in input fields
   if (h.isEditable(e.target) || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
     return void 0;
@@ -113,6 +117,10 @@ function handleLinkKey(e) {
  * @param {object} e - the event
  */
 function handleInsertKey(e) {
+  if (state.isInsertHinting && (e.which === 27 || (e.ctrlKey && e.which === 219))) { // esc/ctrl-[
+    resetCapture();
+  }
+
   // disable in input fields
   if (h.isEditable(e.target) || e.ctrlKey || e.shiftKey || e.metaKey || e.altKey) {
     return void 0;

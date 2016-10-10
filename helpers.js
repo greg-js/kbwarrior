@@ -9,7 +9,7 @@ var h = (function() { // eslint-disable-line
     return (
       /^input|^textarea/i.test(el.tagName) ||
       el.classList.contains('editable') ||
-      el.contentEditable === 'true'
+      /^$|^true$/.test(el.contenteditable)
     );
   }
 
