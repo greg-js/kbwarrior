@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "kbwarrior",
   "description": "Browse the web like a true keyboard warrior with simple hinting and a few vim-style browsing shortcuts.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "browser_action": {
     "default_popup": "popup.html",
     "default_title": "kbwarrior"
